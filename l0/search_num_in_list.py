@@ -14,15 +14,15 @@ print("You entered list:", l)
 
 # We will now convert the string of numbers to a list of numbers
 # We will use the split() function to split the string into words
-llist = l.split(sep=",")
-print("The list of numbers is", llist)
+list_of_numbers_as_text = l.split(sep=",")
+print("The list of numbers is", list_of_numbers_as_text)
 
 # This converts the list of strings to list of a numbers
-nlist = [int(x) for x in llist]
+list_of_numbers_as_ints = [int(x) for x in list_of_numbers_as_text]
 
 # Now we will search the number in the list
 found = False
-for i in nlist:
+for i in list_of_numbers_as_ints:
     if i == x:
         print("The number", x, "is in the list")
         found = True
