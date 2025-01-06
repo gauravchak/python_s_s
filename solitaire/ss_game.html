@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Marble Jump (Peg Solitaire)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .board {
+      display: inline-block;
+      border: 2px solid #333;
+      margin: 20px;
+    }
+    .row {
+      display: flex;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      margin: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #999;
+      cursor: pointer;
+      font-size: 24px;
+      background-color: #ddd;
+    }
+    .cell.blocked {
+      background-color: #aaa;
+      cursor: default;
+    }
+    .marble {
+      background-color: #444;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+    }
+    .selected {
+      outline: 2px solid red;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Simple Marble-Jumping Game</h1>
+<p>Click on a marble to select it, then click on an empty spot two spaces away to jump over exactly one marble.</p>
+
+<div id="board" class="board"></div>
+
+<script>
+  // Representation of a 7×7 peg solitaire board:
+  //   - "O"  = marble
+  //   - "."  = empty hole
+  //   - " "  = blocked (outside the playable area)
+  //
+  // The center position is usually empty (".") in the classic puzzle.
+  let board = [
+    [" ", " ", "O", "O", "O", " ", " "],
+    [" ", " ", "O", "O", "O", " ", " "],
+    ["O", "O", "O", "O", "O", "O", "O"],
+    ["O", "O", "O", ".", "O", "O", "O"],
+    ["O", "O", "O", "O", "O", "O", "O"],
+    [" ", " ", "O", "O", "O", " ", " "],
+    [" ", " ", "O", "O", "O", " ", " "]
+  ];
+
+  // Track which marble (if any) is currently selected {r, c}
+  let selected = null;
+
+  /**
+   * Render the board in the #board container.
+   */
+  function drawBoard() {
+    const boardContainer = document.getElementById("board");
+    boardContainer.innerHTML = "";
+
+    for (let r = 0; r < board.length; r++) {
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("row");
+
+      for (let c = 0; c < board[r].length; c++) {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell");
+
+        const cellVal = board[r][c];
+
+        // Mark blocked cells differently
+        if (cellVal === " ") {
+          cellDiv.classList.add("blocked");
+        }
+
+        // If there's a marble, draw it
+        if (cellVal === "O") {
+          const marbleDiv = document.createElement("div");
+          marbleDiv.classList.add("marble");
+          cellDiv.appendChild(marbleDiv);
+        }
+
+        // Highlight if currently selected
+        if (selected && selected.r === r && selected.c === c) {
+          cellDiv.classList.add("selected");
+        }
+
+        // Add the click handler
+        cellDiv.addEventListener("click", () => handleClick(r, c));
+
+        rowDiv.appendChild(cellDiv);
+      }
+      boardContainer.appendChild(rowDiv);
+    }
+  }
+
+  /**
+   * Handle a click on row r, col c.
+   */
+  function handleClick(r, c) {
+    const cellVal = board[r][c];
+
+    // Blocked area => do nothing
+    if (cellVal === " ") return;
+
+    // If nothing is selected yet...
+    if (!selected) {
+      // Only select if it's a marble
+      if (cellVal === "O") {
+        selected = { r, c };
+      }
+    } else {
+      // If there's a marble already selected, attempt a move.
+      const moved = tryMove(selected.r, selected.c, r, c);
+
+      if (!moved) {
+        // If the move failed, either re-select or clear selection
+        if (cellVal === "O") {
+          // Switch selection to a different marble
+          selected = { r, c };
+        } else {
+          // Just clear the selection
+          selected = null;
+        }
+      } else {
+        // Move successful => clear selection
+        selected = null;
+      }
+    }
+
+    drawBoard();
+  }
+
+  /**
+   * Attempt to jump from (r1, c1) to (r2, c2).
+   * Valid move rules for peg solitaire:
+   *   - Must move exactly two spaces either horizontally or vertically
+   *   - The "middle" spot must have a marble to jump over
+   *   - The target spot must be empty (".")
+   */
+  function tryMove(r1, c1, r2, c2) {
+    // Check row/column differences
+    const dr = r2 - r1;
+    const dc = c2 - c1;
+
+    // Horizontal jump?
+    if (Math.abs(dc) === 2 && dr === 0) {
+      const midC = (c1 + c2) / 2;
+      if (board[r1][midC] === "O" && board[r2][c2] === ".") {
+        // Perform the jump
+        board[r1][c1] = ".";
+        board[r1][midC] = ".";
+        board[r2][c2] = "O";
+        return true;
+      }
+    }
+    // Vertical jump?
+    else if (Math.abs(dr) === 2 && dc === 0) {
+      const midR = (r1 + r2) / 2;
+      if (board[midR][c1] === "O" && board[r2][c2] === ".") {
+        // Perform the jump
+        board[r1][c1] = ".";
+        board[midR][c1] = ".";
+        board[r2][c2] = "O";
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Initial draw
+  drawBoard();
+</script>
+</body>
+</html>
+
