@@ -6,6 +6,8 @@ A program that takes
 - then it prints the converted expression to the other two types.
 """
 
+from typing import List
+
 
 class Node:
     def __init__(self, data):
@@ -76,7 +78,7 @@ def build_tree_from_postfix(tokens_iter):
     return stack.pop() if stack else None
 
 
-def build_tree_from_infix(tokens):
+def build_tree_from_infix(tokens: List[str]):
     """
     Build an expression tree from an infix expression.
 
@@ -266,6 +268,28 @@ def evaluate_tree(node):
         raise ValueError(f"Unknown operator '{node.data}'.")
 
 
+def print_tree(node, level=0, label="0"):
+    """
+    Print the binary tree in a sideways (horizontal) style.
+
+    :param node:  Current node.
+    :param level: Current depth level in the tree (used for indentation).
+    :param label: Label to indicate '0' (Root), 'L' (left), 'R' (right).
+    """
+    if node is None:
+        return
+
+    # First, print the right subtree (at a deeper level)
+    print_tree(node.right, level + 1, "R")
+
+    # Print current node
+    indent = "  " * level  # You can tweak spacing here
+    print(f"{indent}{node.data}")  # [{label}]
+
+    # Finally, print the left subtree
+    print_tree(node.left, level + 1, "L")
+
+
 #
 # Main program entry
 #
@@ -281,7 +305,7 @@ def main():
         "Enter the expression (tokens separated by spaces): "
     ).strip()
 
-    tokens = expression.split()
+    tokens = expression.split()  # list of words, split by whitespace
 
     # Build tree according to type
     if expr_type == "infix":
@@ -293,6 +317,10 @@ def main():
     else:
         print("Invalid type of expression")
         return
+
+    # Print the tree
+    print("\nExpression Tree:")
+    print_tree(root)
 
     # Now print the other two forms
     prefix_expr = tree_to_prefix(root)
