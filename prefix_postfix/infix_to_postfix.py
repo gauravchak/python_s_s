@@ -26,7 +26,7 @@ def is_right_associative(op):
 
 def infix_to_postfix(tokens):
     """
-    Convert infix tokens to postfix tokens using a standard stack-based algorithm:
+    Convert infix tokens to postfix tokens using a standard stack-based algo:
       1. For operands, add to output.
       2. For '(', push to stack.
       3. For ')', pop from stack to output until '(' is found.
@@ -81,6 +81,6 @@ def infix_to_postfix(tokens):
 
 # Example usage
 input_str: str = "3 + 4 * 5"
-tokens: List[str] = input_str.split()
-result: List[str] = infix_to_postfix(tokens)
+itokens: List[str] = input_str.split()
+result: List[str] = infix_to_postfix(itokens)
 print(" ".join(result))  # "3 4 5 * +"

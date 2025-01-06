@@ -61,7 +61,8 @@ def build_tree_from_postfix(tokens_iter):
     Algorithm (stack-based):
       1. For each token:
          - If operand, push a leaf node onto the stack.
-         - If operator, pop top 2 nodes, make them children, push operator node back.
+         - If operator, pop top 2 nodes, make them children, push operator
+           node back.
     """
     stack = []
     for token in tokens_iter:
@@ -89,7 +90,7 @@ def build_tree_from_infix(tokens: List[str]):
       2. Then build a tree from that postfix.
 
     This approach automatically handles operator precedence for {+,-,*,/,^}.
-    If you need parentheses or other operators, you'll need to extend the logic.
+    If you need parentheses or other operators, you'll need to extend the logic
     """
     postfix_tokens = infix_to_postfix(tokens)
     # Now build a tree from the postfix tokens
@@ -170,8 +171,10 @@ def evaluate_tree(node):
     if node.left is None and node.right is None:
         try:
             return float(node.data)
-        except ValueError:
-            raise ValueError(f"Cannot convert operand '{node.data}' to float.")
+        except ValueError as e:
+            raise ValueError(
+                f"Cannot convert operand '{node.data}' to float."
+            ) from e
 
     # Recursively evaluate subtrees
     left_val = evaluate_tree(node.left)
@@ -195,26 +198,25 @@ def evaluate_tree(node):
         raise ValueError(f"Unknown operator '{node.data}'.")
 
 
-def print_tree(node, level=0, label="0"):
+def print_tree(node, level=0):
     """
     Print the binary tree in a sideways (horizontal) style.
 
     :param node:  Current node.
     :param level: Current depth level in the tree (used for indentation).
-    :param label: Label to indicate '0' (Root), 'L' (left), 'R' (right).
     """
     if node is None:
         return
 
     # First, print the right subtree (at a deeper level)
-    print_tree(node.right, level + 1, "R")
+    print_tree(node.right, level + 1)
 
     # Print current node
     indent = "  " * level  # You can tweak spacing here
-    print(f"{indent}{node.data}")  # [{label}]
+    print(f"{indent}{node.data}")
 
     # Finally, print the left subtree
-    print_tree(node.left, level + 1, "L")
+    print_tree(node.left, level + 1)
 
 
 #
@@ -223,6 +225,7 @@ def print_tree(node, level=0, label="0"):
 
 
 def main():
+    """main"""
     expr_type = (
         input("Enter the type of expression (infix/prefix/postfix): ")
         .strip()
