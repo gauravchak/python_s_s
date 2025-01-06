@@ -40,8 +40,8 @@ def build_tree_from_prefix(tokens_iter):
 
     node = Node(token)
 
-    # Assuming anything that is not in {+,-,*,/} is operand
-    if token in {"+", "-", "*", "/"}:
+    # Include ^ in the set of operators
+    if token in {"+", "-", "*", "/", "^"}:
         node.left = build_tree_from_prefix(tokens_iter)
         node.right = build_tree_from_prefix(tokens_iter)
 
@@ -61,7 +61,8 @@ def build_tree_from_postfix(tokens_iter):
     """
     stack = []
     for token in tokens_iter:
-        if token not in {"+", "-", "*", "/"}:
+        # Include ^ in the set of operators
+        if token not in {"+", "-", "*", "/", "^"}:
             # operand
             stack.append(Node(token))
         else:
@@ -79,11 +80,11 @@ def build_tree_from_infix(tokens):
     """
     Build an expression tree from an infix expression.
 
-    For simplicity, we can:
+    For simplicity, we:
       1. Convert the infix to postfix using a standard algorithm.
       2. Then build a tree from that postfix.
 
-    This approach automatically handles operator precedence for {+,-,*,/}.
+    This approach automatically handles operator precedence for {+,-,*,/,^}.
     If you need parentheses or other operators, you'll need to extend the logic.
     """
     postfix_tokens = infix_to_postfix(tokens)
@@ -102,9 +103,17 @@ def precedence(op):
         return 1
     if op in ("*", "/"):
         return 2
-    if op in "^":
+    if op == "^":
         return 3
     return 0
+
+
+def is_right_associative(op):
+    """
+    Return True if operator is right-associative.
+    For typical math usage, '^' is right-associative.
+    """
+    return op == "^"
 
 
 def infix_to_postfix(tokens):
@@ -113,13 +122,14 @@ def infix_to_postfix(tokens):
       1. For operands, add to output.
       2. For '(', push to stack.
       3. For ')', pop from stack to output until '(' is found.
-      4. For operators, pop from stack to output while top of stack has higher or equal precedence.
+      4. For operators, pop from stack to output while top of stack has
+         higher or (if left-associative) equal precedence.
     """
     stack = []
     output = []
     for token in tokens:
         # If token is operand (not operator or parentheses)
-        if token not in {"+", "-", "*", "/", "(", ")"}:
+        if token not in {"+", "-", "*", "/", "^", "(", ")"}:
             output.append(token)
         elif token == "(":
             stack.append(token)
@@ -128,14 +138,29 @@ def infix_to_postfix(tokens):
                 output.append(stack.pop())
             stack.pop()  # remove '(' from stack
         else:
-            # token is an operator: +, -, *, /
-            while (
-                stack
-                and stack[-1] != "("
-                and precedence(stack[-1]) >= precedence(token)
-            ):
-                output.append(stack.pop())
+            # token is an operator: +, -, *, /, ^
+            while stack and stack[-1] != "(":
+                top_op = stack[-1]
+                # Compare precedence of the top of stack with current operator
+                top_precedence = precedence(top_op)
+                current_precedence = precedence(token)
+
+                # (A) If you want '^' to be left-associative (less common):
+                # condition = (top_precedence >= current_precedence)
+
+                # (B) If you want '^' to be right-associative (typical):
+                # pop while top has strictly greater precedence,
+                # or same precedence with left-associative
+                if (top_precedence > current_precedence) or (
+                    top_precedence == current_precedence
+                    and not is_right_associative(token)
+                ):
+                    output.append(stack.pop())
+                else:
+                    break
+
             stack.append(token)
+
     # pop all the operators from the stack
     while stack:
         output.append(stack.pop())
@@ -199,53 +224,15 @@ def tree_to_postfix(node):
 
 
 #
-# Main program entry
+# Evaluate the Expression Tree
 #
-def main():
-    expr_type = (
-        input("Enter the type of expression (infix/prefix/postfix): ")
-        .strip()
-        .lower()
-    )
-    expression = input(
-        "Enter the expression (tokens separated by spaces): "
-    ).strip()
-
-    tokens = expression.split()
-
-    # Build tree according to type
-    if expr_type == "infix":
-        root = build_tree_from_infix(tokens)
-    elif expr_type == "prefix":
-        # for prefix, we iterate from left to right
-        # use an iterator so that the recursive calls can consume tokens
-        root = build_tree_from_prefix(iter(tokens))
-    elif expr_type == "postfix":
-        root = build_tree_from_postfix(tokens)
-    else:
-        print("Invalid type of expression")
-        return
-
-    # Now print the other two forms
-    # We always have three forms: prefix, infix, postfix
-    prefix_expr = tree_to_prefix(root)
-    infix_expr = tree_to_infix(root)
-    postfix_expr = tree_to_postfix(root)
-
-    print("Prefix  :", prefix_expr)
-    print("Infix   :", infix_expr)
-    print("Postfix :", postfix_expr)
-
-    # Now evaluate the tree and write the result
-    # We'll need to implement an evaluation function for this
-    print("Result  :", evaluate_tree(root))
 
 
 def evaluate_tree(node):
     """
     Evaluate the expression tree using a recursive algorithm.
     Leaves (no children) are treated as numeric operands (float).
-    Operators are limited to +, -, *, / and ^.
+    Operators are limited to +, -, *, /, ^.
     """
     if node is None:
         return 0.0
@@ -277,6 +264,47 @@ def evaluate_tree(node):
     else:
         # If we get here, the operator is not recognized
         raise ValueError(f"Unknown operator '{node.data}'.")
+
+
+#
+# Main program entry
+#
+
+
+def main():
+    expr_type = (
+        input("Enter the type of expression (infix/prefix/postfix): ")
+        .strip()
+        .lower()
+    )
+    expression = input(
+        "Enter the expression (tokens separated by spaces): "
+    ).strip()
+
+    tokens = expression.split()
+
+    # Build tree according to type
+    if expr_type == "infix":
+        root = build_tree_from_infix(tokens)
+    elif expr_type == "prefix":
+        root = build_tree_from_prefix(iter(tokens))
+    elif expr_type == "postfix":
+        root = build_tree_from_postfix(tokens)
+    else:
+        print("Invalid type of expression")
+        return
+
+    # Now print the other two forms
+    prefix_expr = tree_to_prefix(root)
+    infix_expr = tree_to_infix(root)
+    postfix_expr = tree_to_postfix(root)
+
+    print("Prefix  :", prefix_expr)
+    print("Infix   :", infix_expr)
+    print("Postfix :", postfix_expr)
+
+    # Evaluate
+    print("Result  :", evaluate_tree(root))
 
 
 if __name__ == "__main__":
