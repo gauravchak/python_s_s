@@ -6,15 +6,16 @@ x = int(x)  # Before this x was a word ( or string ) and now it is a number
 print("You entered the number to search:", x)
 
 # Now we will take a list of numbers from the user. We will want the user to
-# enter numbers separated by space.
+# enter numbers separated by sep.
 # We will then search the number entered by the user in the list.
 # the user will enter something like "2 3 17 12"
-l = input("Enter the list of numbers separated by space: ")
+sep = ","
+l = input(f"Enter the list of numbers separated by {sep}: ")
 print("You entered list:", l)
 
 # We will now convert the string of numbers to a list of numbers
 # We will use the split() function to split the string into words
-list_of_numbers_as_text = l.split(sep=",")
+list_of_numbers_as_text = l.split(sep=sep)
 print("The list of numbers is", list_of_numbers_as_text)
 
 # This converts the list of strings to list of a numbers
