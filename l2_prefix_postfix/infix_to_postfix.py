@@ -32,6 +32,12 @@ def infix_to_postfix(tokens):
       3. For ')', pop from stack to output until '(' is found.
       4. For operators, pop from stack to output while top of stack has
          higher or (if left-associative) equal precedence.
+
+    # Example usage
+    input_str: str = "3 + 4 * 5"
+    itokens: List[str] = input_str.split()
+    result: List[str] = infix_to_postfix(itokens)
+    print(" ".join(result))  # "3 4 5 * +"
     """
     stack = []
     output = []
@@ -77,10 +83,3 @@ def infix_to_postfix(tokens):
     while stack:
         output.append(stack.pop())
     return output
-
-
-# Example usage
-input_str: str = "3 + 4 * 5"
-itokens: List[str] = input_str.split()
-result: List[str] = infix_to_postfix(itokens)
-print(" ".join(result))  # "3 4 5 * +"
