@@ -7,9 +7,6 @@ def transform(input_str: str) -> str:
     2. An integer `p` representing a 1-based position from the left.
     3. An integer `q` representing a 1-based position from the right.
 
-    The intended logic is to replace the digit at position `p` with the
-    digit at position `q`, and then replace the digit at position `q` with '0'.
-
     Args:
         input_str: A space-separated string with a number and two positions.
 
