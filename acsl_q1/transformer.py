@@ -13,64 +13,59 @@ def transform(input_str: str) -> str:
     Returns:
         The transformed string.
     """
-    
-    qwerty = input()
-yay = qwerty.strip().split('\n')
-for l in yay:
-  yay_part=l.split()
-  N = int(yay_part[0])
-  P = int(yay_part[1])
-  D = int(yay_part[2])
 
-  n = str(N)
-  p = len(n) - P
+    l = input_str
+    yay_part = l.split()
+    N = int(yay_part[0])
+    P = int(yay_part[1])
+    D = int(yay_part[2])
 
-  def findp(n,p):
-    nst = []
-    for i in n:
-      nst.append(i)
-    return(nst[p])
+    n = str(N)
+    p = len(n) - P
 
-  x = findp(n,p)
+    def findp(n, p):
+        nst = []
+        for i in n:
+            nst.append(i)
+        return nst[p]
 
-  def findu(num):
-    l = len(str(num))
-    emt = []
-    for i in str(num):
-      emt.append(i)
-    return emt[l-1]
+    x = findp(n, p)
 
-  def findl(num):
-    emt = []
-    for i in str(num):
-      emt.append(i)
-    return emt[0]
+    def findu(num):
+        l = len(str(num))
+        emt = []
+        for i in str(num):
+            emt.append(i)
+        return emt[l - 1]
 
-  def main(x,D):
-    x = int(x)
-    if x < 5:
-      x = x + D
-      x = findu(x)
-      return(x)
-    elif x > 4:
-      x = x - D
-      x = abs(x)
-      x = findl(x)
-      return(x)
+    def findl(num):
+        emt = []
+        for i in str(num):
+            emt.append(i)
+        return emt[0]
 
-  x = main(x,D)
+    def main(x, D):
+        x = int(x)
+        if x < 5:
+            x = x + D
+            x = findu(x)
+            return x
+        elif x > 4:
+            x = x - D
+            x = abs(x)
+            x = findl(x)
+            return x
 
-  def replace(n,p,x):
-    nst = []
-    for i in n:
-      nst.append(i)
-    nst[p] = x
-    for i in (p+1,len(n)-1):
-      nst[i] = str(0)
-    y = "".join(nst)
-    y = int(y)
-    print(y)
+    x = main(x, D)
 
-  replace(n,p,x)
+    def replace(n, p, x):
+        nst = []
+        for i in n:
+            nst.append(i)
+        nst[p] = x
+        for i in (p + 1, len(n) - 1):
+            nst[i] = str(0)
+        y = "".join(nst)
+        return y
 
-    return ""
+    return replace(n, p, x)
