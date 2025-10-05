@@ -1,18 +1,4 @@
 def transform(input_str: str) -> str:
-    """
-    Transforms a string based on a specific logic.
-
-    The input string is expected to contain three space-separated parts:
-    1. A string of digits (e.g., "124987").
-    2. An integer `p` representing a 1-based position from the left.
-    3. An integer `q` representing a 1-based position from the right.
-
-    Args:
-        input_str: A space-separated string with a number and two positions.
-
-    Returns:
-        The transformed string.
-    """
 
     l = input_str
     yay_part = l.split()
@@ -69,3 +55,26 @@ def transform(input_str: str) -> str:
         return y
 
     return replace(n, p, x)
+
+
+def transform_2(input_str: str) -> str:
+
+    N, P, D = input_str.split()
+    P, D = int(P), int(D)
+    s = list(str(N))  # Needed because string s wouldn't support injection
+    idx = len(s) - P  # index of P-th digit from right
+    digit = int(s[idx])  # P-th from last digit
+
+    if 0 <= digit <= 4:
+        new_digit = (digit + D) % 10
+    else:
+        diff = abs(digit - D)
+        new_digit = int(str(diff)[0])  # leftmost digit
+
+    s[idx] = str(new_digit)
+
+    # Replace digits to right of P-th digit with 0
+    for i in range(idx + 1, len(s)):
+        s[i] = "0"
+
+    return "".join(s)
