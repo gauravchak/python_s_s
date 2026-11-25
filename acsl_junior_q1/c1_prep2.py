@@ -39,19 +39,7 @@ HOW TO TEST:
       pytest c1_prep2.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def format_scores(score1: int, score2: int) -> str:
     # TODO: Write your code here! Replace `pass` with your solution.

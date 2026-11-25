@@ -41,19 +41,7 @@ HOW TO TEST:
       pytest c1_prep3.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def mini_rings(player1: str, player2: str) -> str:
     # TODO: Write your code here! Replace `pass` with your solution.

@@ -39,19 +39,7 @@ HOW TO TEST:
       pytest c1_prep4.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def count_and_score(text: str, target: str, points_per_item: int) -> int:
     # TODO: Write your code here! Replace `pass` with your solution.

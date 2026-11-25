@@ -8,18 +8,7 @@ or
     python3 test_c1_2024_2025.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
+import pytest
 from c1_2024_2025 import calculate_score, solve_rings, solve_from_input_str
 
 

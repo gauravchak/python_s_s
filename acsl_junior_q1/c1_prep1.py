@@ -41,19 +41,7 @@ HOW TO TEST:
       pytest c1_prep1.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def score_ring_toss(tosses: str) -> int:
     # TODO: Write your code here! Replace `pass` with your solution.

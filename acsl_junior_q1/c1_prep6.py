@@ -41,19 +41,7 @@ HOW TO TEST:
       pytest c1_prep6.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def transform_digit(digit: int, d: int) -> int:
     # TODO: Write your code here! Replace `pass` with your solution.

@@ -43,19 +43,7 @@ HOW TO TEST:
       pytest c1_prep5.py
 """
 
-try:
-    import pytest
-except ImportError:
-    class _DummyMark:
-        @staticmethod
-        def parametrize(*args, **kwargs):
-            return lambda fn: fn
-
-    class _DummyPytest:
-        mark = _DummyMark()
-
-    pytest = _DummyPytest()
-
+import pytest
 
 def get_digit_from_right(number: int, p: int) -> int:
     # TODO: Write your code here! Replace `pass` with your solution.
